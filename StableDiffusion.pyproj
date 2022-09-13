@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>StableDiffusion</Name>
     <RootNamespace>StableDiffusion</RootNamespace>
-    <InterpreterId>MSBuild|Diffusion|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>MSBuild|DiffusionEnv|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,10 +25,10 @@
     <Compile Include="StableDiffusion.py" />
   </ItemGroup>
   <ItemGroup>
-    <Interpreter Include="Diffusion\">
-      <Id>Diffusion</Id>
+    <Interpreter Include="..\DiffusionEnv\">
+      <Id>DiffusionEnv</Id>
       <Version>3.10</Version>
-      <Description>Diffusion (Python 3.10 (64-bit))</Description>
+      <Description>DiffusionEnv (Python 3.10 (64-bit))</Description>
       <InterpreterPath>Scripts\python.exe</InterpreterPath>
       <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
