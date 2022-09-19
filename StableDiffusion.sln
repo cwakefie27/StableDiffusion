@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32901.215
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "StableDiffusion", "StableDiffusion.pyproj", "{88E50E8F-56BF-4A72-BCEE-27CB5E551A00}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88E50E8F-56BF-4A72-BCEE-27CB5E551A00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88E50E8F-56BF-4A72-BCEE-27CB5E551A00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FFAADC39-84F5-4DF7-AF9B-E30D19C34A0F}
+	EndGlobalSection
+EndGlobal
