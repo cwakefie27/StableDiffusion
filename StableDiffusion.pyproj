@@ -22,6 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Img2Img.py" />
     <Compile Include="StableDiffusion.py" />
   </ItemGroup>
   <ItemGroup>
