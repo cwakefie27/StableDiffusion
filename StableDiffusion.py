@@ -31,8 +31,10 @@ eta = 0.6
 height= 512
 width = 512
 init_image_path = 'D:\Results2\InputImages\sketch-mountains.jpg';
+mask_image_path = '',
 
 use_init_image = True
+use_mask_image = False
 nsfw_filter_disabled = True
 save_image = True
 open_image = False
@@ -95,6 +97,12 @@ if use_init_image:
     init_image = Image.open(init_image_path).convert("RGB")
     init_image = init_image.resize((768, 512))
     kwargs['init_image'] = init_image
+
+    if use_mask_image:
+        mask_image = Image.open(mask_image_path).convert("RGB")
+        kwargs['mask_image'] = mask_image
+        
+
 else:
     pipe_line_title = 'Text'
     pipe_line = StableDiffusionPipeline
