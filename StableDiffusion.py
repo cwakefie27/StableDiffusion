@@ -2,7 +2,29 @@
 # cmd -> git lfs install
 # cmd -> git clone https://huggingface.co/CompVis/stable-diffusion-v1-4
 
-prompts = ["Tsunami Natural Disaster, trending in artstation"]
+# tags
+#  -  Anime
+#  -  Oil Painting
+#  -  Steampunk
+#  -  by josef thoma
+#  -  BekSinSKi
+#  -  Anthromorphic
+
+# nouns
+#  -  Pokemon
+#  -  Yughio
+#  -  Magic
+
+# helpful 
+#  - Trending in Artstation
+#  - 4k 
+#  - Detailed
+#  - Hyper realism
+#  - Vivid Colors
+
+prompts = ["Anime Japanese, 4k, trending in artstation"]
+#prompts = ["Shrek and donkey Sexual Intercourse, Hyper Realism, 4k"]
+#prompts = ["Tsunami Natural Disaster, trending in artstation"]
 #prompts = ["A physical therapy shrek doctor, trending in artstation"]
 #prompts = ["Origami Dragon, trending in artstation"]
 #prompts = ["Weed smoked man plays twilight imperium in october"]
@@ -30,19 +52,20 @@ strength = 0.75
 eta = 0.6
 height= 512
 width = 512
-init_image_path = 'D:\Results2\InputImages\sketch-mountains.jpg';
-mask_image_path = '',
+
+base_directory = "D:\Results2"
+summary_dir = 'D:\Results2\Summary'
+
+nsfw_filter_disabled = True
+open_image = False
+open_summary = True
+save_image = True
+save_summary = True
 
 use_init_image = True
 use_mask_image = False
-nsfw_filter_disabled = True
-save_image = True
-open_image = False
-save_summary = True
-open_summary = True
-
-base_directory = "D:\Results2"
-summary_dir = 'Summary'
+init_image_path = 'D:\Results2\InputImages\leanne.jpg';
+mask_image_path = '',
 
 from torch import autocast, float16, Generator
 from diffusers import StableDiffusionPipeline, StableDiffusionImg2ImgPipeline
@@ -61,27 +84,6 @@ def image_grid(imgs, rows, cols):
 def dummy(images, **kwargs):
     return images, False
 
-# tags
-#  -  Anime
-#  -  Oil Painting
-#  -  Steampunk
-#  -  by josef thoma
-#  -  BekSinSKi
-#  -  Anthromorphic
-
-# nouns
-#  -  Pokemon
-#  -  Yughio
-#  -  Magic
-
-# helpful 
-#  - Trending in Artstation
-#  - 4k 
-#  - Detailed
-#  - Hyper realism
-#  - Vivid Colors
-
-
 kwargs = {}
 
 kwargs['num_inference_steps'] = num_inference_steps
@@ -95,7 +97,19 @@ if use_init_image:
     pipe_line_title = 'Image'
     pipe_line = StableDiffusionImg2ImgPipeline
     init_image = Image.open(init_image_path).convert("RGB")
-    init_image = init_image.resize((768, 512))
+
+    if init_image.width > init_image.height:
+        adjusted_x = ceil(init_image.width/(init_image.height/512))
+        adjusted_x = adjusted_x + adjusted_x % 2;
+        init_image = init_image.resize((adjusted_x, 512))
+    elif init_image.width < init_image.height:
+        adjusted_y = ceil(init_image.height/(init_image.width/512))
+        adjusted_y = adjusted_y + adjusted_y % 2;
+        init_image = init_image.resize(512, adjusted_y)
+    else:
+        init_image = init_image.resize((512, 512))
+
+
     kwargs['init_image'] = init_image
 
     if use_mask_image:
@@ -173,12 +187,10 @@ for prompt in prompts:
         grid = image_grid(images, rows=rows, cols=cols)
 
         if save_summary:
-            summary_path = path.join(base_directory, summary_dir)
+            if not path.isdir(summary_dir):
+                mkdir(summary_dir)
 
-            if not path.isdir(summary_path):
-                mkdir(summary_path)
-
-            summary_file_name = path.join(summary_path,  f'{prompt_description}.png')
+            summary_file_name = path.join(summary_dir,  f'{prompt_description}.png')
             print (f'Summary {summary_file_name}')
 
             grid.save(summary_file_name)
