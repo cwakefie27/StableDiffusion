@@ -4,16 +4,22 @@
 
 # tags
 #  -  Anime
+#  -  Origami
 #  -  Oil Painting
 #  -  Steampunk
 #  -  by josef thoma
 #  -  BekSinSKi
 #  -  Anthromorphic
+#  -  Futuristic
 
 # nouns
+#  -  Shrek
 #  -  Pokemon
 #  -  Yughio
 #  -  Magic
+#  -  Food
+#  -  Sport
+#  -  Board Game
 
 # helpful 
 #  - Trending in Artstation
@@ -22,8 +28,17 @@
 #  - Hyper realism
 #  - Vivid Colors
 
-prompts = ["Anime Japanese, 4k, trending in artstation"]
-#prompts = ["Shrek and donkey Sexual Intercourse, Hyper Realism, 4k"]
+#prompts = ["Mid-Mod furnished mansion"]
+prompts = ["gordan ramsay vampire video game, hyper realism"]
+#prompts = ["Board Game of Shrek Cult, Religion, Hyper Realism"]
+#prompts = ["Disc Golf Low Back Bag Small Ergonomic"]
+#prompts = ["Cyborg Programmer Future Action binary"]
+#prompts = ["Fairy cottage under big tree in woods. Peaceful Serene Painting, Trending in Artstation"]
+#prompts = ["Muhammad Ali Wearing Jordan 1 and Michael Jackson Jacket"]
+#prompts = ["Danny Devito Muscalar Spandex Dominatrix Whip, Hyper Realism"]
+#prompts = ["Nightmare Horror Demon Satan Shrek, Hyper Realism, 4k, Trending in Artstation"]
+#prompts = ["Shrek as donkey portrait, Hyper Realism, 4k, Trending in Artstation"]
+#prompts = ["Shrek as Donald Trump portrait, Hyper Realism, 4k, Trending in Artstation"]
 #prompts = ["Tsunami Natural Disaster, trending in artstation"]
 #prompts = ["A physical therapy shrek doctor, trending in artstation"]
 #prompts = ["Origami Dragon, trending in artstation"]
@@ -45,7 +60,7 @@ prompts = ["Anime Japanese, 4k, trending in artstation"]
 #prompts = ["Watercolor peach face lovebird"]
 #prompts = ["painting of fantasy chicken warrior"]
 
-seeds = [1,2,3,4, 5,6,7,8, 9,10,11,12]
+seeds = [1,2,3,4, 5,6,7,8, 9,10,11,12, 13,14,15,16, 17,18,19,20,21,22,23,24,25, 26,27,28,29,30,31,32,33,34,35,36]
 num_inference_steps = 30
 guidance_scale=7.5
 strength = 0.75
@@ -53,8 +68,8 @@ eta = 0.6
 height= 512
 width = 512
 
-base_directory = "D:\Results2"
-summary_dir = 'D:\Results2\Summary'
+base_dir = "D:\Results"
+summary_dir = 'D:\Results\Summary'
 
 nsfw_filter_disabled = True
 open_image = False
@@ -62,10 +77,13 @@ open_summary = True
 save_image = True
 save_summary = True
 
-use_init_image = True
+use_init_image = False
 use_mask_image = False
-init_image_path = 'D:\Results2\InputImages\leanne.jpg';
+init_image_path = 'D:\Results\InputImages\leanne.jpg';
 mask_image_path = '',
+
+ # cuda | cpu
+pipeline_processor = 'cuda'
 
 from torch import autocast, float16, Generator
 from diffusers import StableDiffusionPipeline, StableDiffusionImg2ImgPipeline
@@ -98,19 +116,19 @@ if use_init_image:
     pipe_line = StableDiffusionImg2ImgPipeline
     init_image = Image.open(init_image_path).convert("RGB")
 
+    adjusted_x = 512
+    adjusted_y = 512
     if init_image.width > init_image.height:
         adjusted_x = ceil(init_image.width/(init_image.height/512))
         adjusted_x = adjusted_x + adjusted_x % 2;
-        init_image = init_image.resize((adjusted_x, 512))
     elif init_image.width < init_image.height:
         adjusted_y = ceil(init_image.height/(init_image.width/512))
         adjusted_y = adjusted_y + adjusted_y % 2;
-        init_image = init_image.resize(512, adjusted_y)
-    else:
-        init_image = init_image.resize((512, 512))
 
+    init_image = init_image.resize((adjusted_x, adjusted_y))
 
     kwargs['init_image'] = init_image
+
 
     if use_mask_image:
         mask_image = Image.open(mask_image_path).convert("RGB")
@@ -139,7 +157,7 @@ pipe = StableDiffusionPipeline.from_pretrained(
     use_auth_token=token)
 '''
 
-pipe = pipe.to("cuda")
+pipe = pipe.to(pipeline_processor)
 pipe.enable_attention_slicing()
 
 if nsfw_filter_disabled:
@@ -154,21 +172,21 @@ for prompt in prompts:
     prompt_title = (prompt).title().replace(" ", "")
     prompt_description = f'{pipe_line_title}_{prompt_title}_I{num_inference_steps}_GS{guidance_scale}_ETA{eta}_{height}x{width}'
 
-    prompt_dir = path.join(base_directory, prompt_description)
+    prompt_dir = path.join(base_dir, prompt_description)
     print (f'{prompt} in {prompt_dir}')
     if not path.isdir(prompt_dir):
         mkdir(prompt_dir)
     
     images = []
     for idx, seed in enumerate(seeds):
-        generator = Generator("cuda").manual_seed(seed)
+        generator = Generator(pipeline_processor).manual_seed(seed)
         kwargs['generator'] = generator
 
         file_name = path.join(prompt_dir,  f'{seed}.png')
 
         print (f'Generating {file_name} ({idx+1} of {len(seeds)})')
 
-        with autocast("cuda"):
+        with autocast(pipeline_processor):
 
             result = pipe(
                 **kwargs)  
