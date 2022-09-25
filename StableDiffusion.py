@@ -28,8 +28,8 @@
 #  - Hyper realism
 #  - Vivid Colors
 
-#prompts = ["Mid-Mod furnished mansion"]
-prompts = ["gordan ramsay vampire video game, hyper realism"]
+prompts = ["Mid-Mod Wooden Living Room, Hyper Realism"]
+#prompts = ["gordan ramsay vampire video game, hyper realism"]
 #prompts = ["Board Game of Shrek Cult, Religion, Hyper Realism"]
 #prompts = ["Disc Golf Low Back Bag Small Ergonomic"]
 #prompts = ["Cyborg Programmer Future Action binary"]
@@ -88,7 +88,7 @@ pipeline_processor = 'cuda'
 from torch import autocast, float16, Generator
 from diffusers import StableDiffusionPipeline, StableDiffusionImg2ImgPipeline
 from PIL import Image 
-from os import mkdir, path
+from os import makedirs, path
 from math import sqrt, ceil
 
 def image_grid(imgs, rows, cols):
@@ -170,12 +170,12 @@ for prompt in prompts:
     kwargs['prompt'] = prompt
 
     prompt_title = (prompt).title().replace(" ", "")
-    prompt_description = f'{pipe_line_title}_{prompt_title}_I{num_inference_steps}_GS{guidance_scale}_ETA{eta}_{height}x{width}'
+    prompt_description = f'{prompt_title}_I{num_inference_steps}_GS{guidance_scale}_ETA{eta}_{height}x{width}'
 
-    prompt_dir = path.join(base_dir, prompt_description)
+    prompt_dir = path.join(base_dir, pipe_line_title, prompt_description)
     print (f'{prompt} in {prompt_dir}')
     if not path.isdir(prompt_dir):
-        mkdir(prompt_dir)
+        makedirs(prompt_dir)
     
     images = []
     for idx, seed in enumerate(seeds):
@@ -206,7 +206,7 @@ for prompt in prompts:
 
         if save_summary:
             if not path.isdir(summary_dir):
-                mkdir(summary_dir)
+                makedirs(summary_dir)
 
             summary_file_name = path.join(summary_dir,  f'{prompt_description}.png')
             print (f'Summary {summary_file_name}')
